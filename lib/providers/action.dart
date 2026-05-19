@@ -395,7 +395,6 @@ class SetupAction extends _$SetupAction {
       patchConfig: realPatchConfig,
     );
     final yamlString = vm2.a;
-    if (yamlString.isEmpty) return;
     final yamlMd5 = vm2.b;
     if (yamlMd5 == globalState.lastConfigMd5 && force == false) return;
     await globalState.loadingRun(
@@ -408,7 +407,9 @@ class SetupAction extends _$SetupAction {
           params: _setupParams,
           preloadInvoke: preloadInvoke,
         );
-        if (message.isNotEmpty) throw message;
+        if (message.isNotEmpty && !message.endsWith('is empty')) {
+          throw message;
+        }
         ref.read(checkIpNumProvider.notifier).add();
         await onUpdated?.call();
       },
@@ -876,6 +877,7 @@ class ProfilesAction extends _$ProfilesAction {
   void putProfile(Profile profile) {
     ref.read(profilesProvider.notifier).put(profile);
     if (ref.read(currentProfileIdProvider) != null) return;
+    print('update===>data');
     ref.read(currentProfileIdProvider.notifier).value = profile.id;
   }
 
